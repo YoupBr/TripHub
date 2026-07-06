@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "623096127d25316b85cff64d5f081e72",
+    "content-hash": "cae28501fec513afd5d1f124e2ddce9b",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -1212,58 +1212,6 @@
             "time": "2026-06-23T13:02:23+00:00"
         },
         {
-            "name": "laravel/chisel",
-            "version": "v0.1.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/laravel/chisel.git",
-                "reference": "c2ac11cd1c6b763b412aa26b9d95fce70a489d31"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/laravel/chisel/zipball/c2ac11cd1c6b763b412aa26b9d95fce70a489d31",
-                "reference": "c2ac11cd1c6b763b412aa26b9d95fce70a489d31",
-                "shasum": ""
-            },
-            "require": {
-                "illuminate/process": "^10.20|^11.0|^12.0|^13.0",
-                "nikic/php-parser": "^5.0",
-                "php": "^8.2"
-            },
-            "require-dev": {
-                "laravel/pint": "^1.24.0",
-                "pestphp/pest": "^4.1.0",
-                "phpstan/phpstan": "^2.1.26",
-                "rector/rector": "^2.1.7"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Laravel\\Chisel\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Taylor Otwell",
-                    "email": "taylor@laravel.com"
-                }
-            ],
-            "description": "Toolkit for building scripts that remove unwanted code, files, and dependencies.",
-            "keywords": [
-                "chisel",
-                "laravel"
-            ],
-            "support": {
-                "issues": "https://github.com/laravel/chisel/issues",
-                "source": "https://github.com/laravel/chisel/tree/v0.1.1"
-            },
-            "time": "2026-05-13T21:29:24+00:00"
-        },
-        {
             "name": "laravel/fortify",
             "version": "v1.37.2",
             "source": {
@@ -1739,33 +1687,33 @@
         },
         {
             "name": "laravel/tinker",
-            "version": "v3.0.2",
+            "version": "v2.11.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/tinker.git",
-                "reference": "4faba77764bd33411735936acdf30446d058c78b"
+                "reference": "c9f80cc835649b5c1842898fb043f8cc098dd741"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/tinker/zipball/4faba77764bd33411735936acdf30446d058c78b",
-                "reference": "4faba77764bd33411735936acdf30446d058c78b",
+                "url": "https://api.github.com/repos/laravel/tinker/zipball/c9f80cc835649b5c1842898fb043f8cc098dd741",
+                "reference": "c9f80cc835649b5c1842898fb043f8cc098dd741",
                 "shasum": ""
             },
             "require": {
-                "illuminate/console": "^8.0|^9.0|^10.0|^11.0|^12.0|^13.0",
-                "illuminate/contracts": "^8.0|^9.0|^10.0|^11.0|^12.0|^13.0",
-                "illuminate/support": "^8.0|^9.0|^10.0|^11.0|^12.0|^13.0",
-                "php": "^8.1",
-                "psy/psysh": "^0.12.0",
-                "symfony/var-dumper": "^5.4|^6.0|^7.0|^8.0"
+                "illuminate/console": "^6.0|^7.0|^8.0|^9.0|^10.0|^11.0|^12.0",
+                "illuminate/contracts": "^6.0|^7.0|^8.0|^9.0|^10.0|^11.0|^12.0",
+                "illuminate/support": "^6.0|^7.0|^8.0|^9.0|^10.0|^11.0|^12.0",
+                "php": "^7.2.5|^8.0",
+                "psy/psysh": "^0.11.1|^0.12.0",
+                "symfony/var-dumper": "^4.3.4|^5.0|^6.0|^7.0|^8.0"
             },
             "require-dev": {
                 "mockery/mockery": "~1.3.3|^1.4.2",
                 "phpstan/phpstan": "^1.10",
-                "phpunit/phpunit": "^10.5|^11.5"
+                "phpunit/phpunit": "^8.5.8|^9.3.3|^10.0"
             },
             "suggest": {
-                "illuminate/database": "The Illuminate Database package (^8.0|^9.0|^10.0|^11.0|^12.0|^13.0)."
+                "illuminate/database": "The Illuminate Database package (^6.0|^7.0|^8.0|^9.0|^10.0|^11.0|^12.0)."
             },
             "type": "library",
             "extra": {
@@ -1773,9 +1721,6 @@
                     "providers": [
                         "Laravel\\Tinker\\TinkerServiceProvider"
                     ]
-                },
-                "branch-alias": {
-                    "dev-master": "3.x-dev"
                 }
             },
             "autoload": {
@@ -1802,9 +1747,9 @@
             ],
             "support": {
                 "issues": "https://github.com/laravel/tinker/issues",
-                "source": "https://github.com/laravel/tinker/tree/v3.0.2"
+                "source": "https://github.com/laravel/tinker/tree/v2.11.1"
             },
-            "time": "2026-03-17T14:54:13+00:00"
+            "time": "2026-02-06T14:12:35+00:00"
         },
         {
             "name": "league/commonmark",
@@ -2366,64 +2311,6 @@
             "time": "2026-03-08T20:05:35+00:00"
         },
         {
-            "name": "livewire/blaze",
-            "version": "v1.0.12",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/livewire/blaze.git",
-                "reference": "6f7d21aac44e542261590c744aa959129c9a04ed"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/livewire/blaze/zipball/6f7d21aac44e542261590c744aa959129c9a04ed",
-                "reference": "6f7d21aac44e542261590c744aa959129c9a04ed",
-                "shasum": ""
-            },
-            "require": {
-                "illuminate/support": "^10.0|^11.0|^12.0|^13.0",
-                "illuminate/view": "^10.0|^11.0|^12.0|^13.0",
-                "nikic/php-parser": "^5.0",
-                "php": "^8.1"
-            },
-            "conflict": {
-                "livewire/flux": "<2.12.1"
-            },
-            "require-dev": {
-                "livewire/flux": "dev-main",
-                "orchestra/testbench": "^8.0|^9.0|^10.0|^11.0",
-                "pestphp/pest": "^2.0|^3.0|^4.0",
-                "pestphp/pest-plugin-laravel": "^2.0|^3.0|^4.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Livewire\\Blaze\\BlazeServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Livewire\\Blaze\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Caleb Porzio"
-                }
-            ],
-            "description": "A tool for optimizing Blade component performance by folding them into parent templates",
-            "support": {
-                "issues": "https://github.com/livewire/blaze/issues",
-                "source": "https://github.com/livewire/blaze/tree/v1.0.12"
-            },
-            "time": "2026-04-06T09:24:26+00:00"
-        },
-        {
             "name": "livewire/flux",
             "version": "v2.15.0",
             "source": {
@@ -2491,16 +2378,16 @@
         },
         {
             "name": "livewire/livewire",
-            "version": "v4.3.3",
+            "version": "v3.8.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/livewire/livewire.git",
-                "reference": "8021f2561865c4c297a3bfca37212a99034377e7"
+                "reference": "e77fce60d0615d68dc6b8fafe98a6739d9752a24"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/livewire/livewire/zipball/8021f2561865c4c297a3bfca37212a99034377e7",
-                "reference": "8021f2561865c4c297a3bfca37212a99034377e7",
+                "url": "https://api.github.com/repos/livewire/livewire/zipball/e77fce60d0615d68dc6b8fafe98a6739d9752a24",
+                "reference": "e77fce60d0615d68dc6b8fafe98a6739d9752a24",
                 "shasum": ""
             },
             "require": {
@@ -2555,7 +2442,7 @@
             "description": "A front-end framework for Laravel.",
             "support": {
                 "issues": "https://github.com/livewire/livewire/issues",
-                "source": "https://github.com/livewire/livewire/tree/v4.3.3"
+                "source": "https://github.com/livewire/livewire/tree/v3.8.2"
             },
             "funding": [
                 {
@@ -2563,7 +2450,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-06-27T03:16:11+00:00"
+            "time": "2026-06-27T03:14:20+00:00"
         },
         {
             "name": "monolog/monolog",

@@ -65,8 +65,7 @@
                         </x-responsive-nav-link>
 
                         <x-responsive-nav-link :href="route('documents.index')" :active="request()->routeIs('documents.*')">
-                            Documenten
-                        </x-responsive-nav-link>
+  ye
                         <!-- Authentication -->
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf

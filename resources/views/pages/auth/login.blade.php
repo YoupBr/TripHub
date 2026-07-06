@@ -1,4 +1,4 @@
-<x-layouts::auth :title="__('Log in')">
+<x-layouts.auth :title="__('Log in')">
     <div class="flex flex-col gap-6">
         <x-auth-header :title="__('Inloggen')" :description="__('Vul je email en wachtwoord in om in te loggen')" />
 
@@ -56,4 +56,4 @@
             <flux:link :href="route('register')" wire:navigate>{{ __('Sign up') }}</flux:link>
         </div>
     </div>
-</x-layouts::auth>
+</x-layouts.auth>

@@ -34,6 +34,7 @@ class RegisteredUserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'family_code' => ['required'],             
         ]);
 
         $user = User::create([
@@ -41,6 +42,12 @@ class RegisteredUserController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
+
+        if ($request->family_code !== config('app.family_code')) {
+        return back()->withErrors([
+        'family_code' => 'De familiecode klopt niet.',
+            ])->withInput();
+        }
 
         event(new Registered($user));
 

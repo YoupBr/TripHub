@@ -28,25 +28,32 @@ class RegisteredUserController extends Controller
      *
      * @throws ValidationException
      */
-    public function store(Request $request): RedirectResponse
-    {
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'invite_code' => ['required', 'string'],           
-        ]);
+ public function store(Request $request): RedirectResponse
+{
+    $request->validate([
+        'name' => ['required', 'string', 'max:255'],
+        'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+        'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        'invite_code' => ['required', 'string'],
+    ]);
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
+    if ($request->invite_code !== config('app.family_invite_code')) {
+        return back()->withErrors([
+            'invite_code' => 'De familiecode klopt niet.',
+        ])->withInput();
+    }
 
-        if ($request->invite_code !== config('app.family_code')) {
-    return back()->withErrors([
-        'invite_code' => 'De familiecode klopt niet.',
-    ])->withInput();
+    $user = User::create([
+        'name' => $request->name,
+        'email' => $request->email,
+        'password' => Hash::make($request->password),
+    ]);
+
+    event(new Registered($user));
+
+    Auth::login($user);
+
+    return redirect(route('dashboard', absolute: false));
 }
 
         event(new Registered($user));

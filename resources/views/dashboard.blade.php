@@ -55,7 +55,7 @@
                         </div>
 
                         <div class="rounded-2xl bg-white/15 p-4 backdrop-blur">
-                            <p class="text-xs opacity-75">Terugkomst</p>
+                            <p class="text-xs opacity-75">Doorreis</p>
                             <p class="mt-1 text-lg font-semibold">
                                 {{ $trip->end_date?->format('d-m-Y') ?? 'Nog niet ingevuld' }}
                             </p>

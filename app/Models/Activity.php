@@ -14,6 +14,9 @@ class Activity extends Model
         'ends_at',
         'location',
         'category',
+        'location',
+        'latitude',
+        'longitude',
     ];
 
     protected $casts = [

@@ -71,17 +71,6 @@
                 </div>
 
                 <div>
-                    <label class="mb-1 block text-sm font-semibold">Locatie</label>
-                    <input
-                        type="text"
-                        name="location"
-                        value="{{ old('location') }}"
-                        placeholder="Bijv. Schiphol Airport"
-                        class="w-full rounded-xl border-slate-300"
-                    >
-                </div>
-
-                <div>
                     <label class="mb-1 block text-sm font-semibold">Categorie</label>
                     <select name="category" class="w-full rounded-xl border-slate-300">
                         <option value="activity">Activiteit</option>
@@ -98,9 +87,29 @@
                         name="description"
                         rows="4"
                         placeholder="Extra info, reserveringsnummer, opmerkingen..."
-                        class="w-full rounded-xl border-slate-300"
+                        class="w-full rounded-xl border-slate-300" "px-5 py-3"
                     >{{ old('description') }}</textarea>
                 </div>
+
+                <div>
+                        <input type="hidden" name="latitude" id="latitude">
+                        <input type="hidden" name="longitude" id="longitude">
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Locatie</label>
+                            <input
+                                name="location"
+                                id="location"
+                                type="text"
+                                placeholder="Zoek bijvoorbeeld: Eiffeltoren, Parijs"
+                                class="mt-1 block w-full rounded-md border-gray-300"
+                                autocomplete="off"
+                            >
+
+                            <div id="location-results" class="mt-2 space-y-2"></div>
+                        </div>
+
+                        <div id="pick-map" class="mt-4 h-72 w-full rounded-xl border"></div>
 
                 <button
                     type="submit"
@@ -114,4 +123,93 @@
     </main>
 </div>
 </body>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+    const locationInput = document.getElementById('location');
+    const resultsBox = document.getElementById('location-results');
+    const latInput = document.getElementById('latitude');
+    const lngInput = document.getElementById('longitude');
+
+    const map = L.map('pick-map').setView([52.3676, 4.9041], 6);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; OpenStreetMap'
+    }).addTo(map);
+
+    let marker = null;
+    let searchTimeout = null;
+
+    function setLocation(lat, lon, label) {
+        latInput.value = lat;
+        lngInput.value = lon;
+        locationInput.value = label;
+
+        if (marker) {
+            marker.setLatLng([lat, lon]);
+        } else {
+            marker = L.marker([lat, lon], { draggable: true }).addTo(map);
+
+            marker.on('dragend', function () {
+                const position = marker.getLatLng();
+                latInput.value = position.lat;
+                lngInput.value = position.lng;
+            });
+        }
+
+        map.setView([lat, lon], 14);
+        resultsBox.innerHTML = '';
+    }
+
+    locationInput.addEventListener('input', function () {
+        clearTimeout(searchTimeout);
+
+        const query = this.value.trim();
+
+        if (query.length < 3) {
+            resultsBox.innerHTML = '';
+            return;
+        }
+
+        searchTimeout = setTimeout(async () => {
+            const response = await fetch(
+                `https://photon.komoot.io/api/?q=${encodeURIComponent(query)}&limit=5`
+            );
+
+            const data = await response.json();
+
+            resultsBox.innerHTML = '';
+
+            data.features.forEach(feature => {
+                const props = feature.properties;
+                const [lon, lat] = feature.geometry.coordinates;
+
+                const label = [
+                    props.name,
+                    props.street,
+                    props.city,
+                    props.country
+                ].filter(Boolean).join(', ');
+
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.className = 'block w-full rounded-lg border bg-white px-3 py-2 text-left text-sm hover:bg-slate-50';
+                button.textContent = label;
+
+                button.addEventListener('click', () => {
+                    setLocation(lat, lon, label);
+                });
+
+                resultsBox.appendChild(button);
+            });
+        }, 350);
+    });
+
+    map.on('click', function (e) {
+        setLocation(e.latlng.lat, e.latlng.lng, locationInput.value || 'Gekozen locatie');
+    });
+</script>
 </html>

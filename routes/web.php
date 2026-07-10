@@ -25,6 +25,17 @@ Route::middleware(['auth'])->group(function () {
         return redirect()->route('dashboard');
     });
 
+    Route::get('/map', function () {
+    $trip = Trip::with([
+        'activities' => fn ($query) => $query
+            ->whereNotNull('latitude')
+            ->whereNotNull('longitude')
+            ->orderBy('starts_at'),
+    ])->firstOrFail();
+
+    return view('map.index', compact('trip'));
+    })->name('map.index');
+
     Route::get('/activities/create', function () {
         $trip = Trip::firstOrFail();
 
@@ -40,6 +51,9 @@ Route::middleware(['auth'])->group(function () {
             'location' => ['nullable', 'string', 'max:255'],
             'category' => ['required', 'string', 'max:50'],
             'description' => ['nullable', 'string'],
+            'location' => ['nullable', 'string', 'max:255'],
+            'latitude' => ['nullable', 'numeric', 'between:-90,90'],
+            'longitude' => ['nullable', 'numeric', 'between:-180,180'],
         ]);
 
         Activity::create($validated);
@@ -130,4 +144,3 @@ Route::middleware(['auth'])->group(function () {
     })->name('calendar.index');
 });
 
-require __DIR__.'/auth.php';

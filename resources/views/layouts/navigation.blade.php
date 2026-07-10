@@ -36,6 +36,10 @@
                     <x-nav-link :href="route('documents.index')" :active="request()->routeIs('documents.*')">
                         Documenten
                     </x-nav-link>
+
+                    <x-nav-link :href="route('map.index')" :active="request()->routeIs('map.*')">
+                        Kaart
+                    </x-nav-link>
                 </div>
             </div>
 
@@ -67,6 +71,10 @@
                         <x-dropdown-link :href="route('documents.index')">
                             Documenten
                         </x-dropdown-link>
+
+                        <x-responsive-nav-link :href="route('map.index')" :active="request()->routeIs('map.*')">
+                            Kaart
+                        </x-responsive-nav-link>
 
                         <!-- Authentication -->
                         <form method="POST" action="{{ route('logout') }}">

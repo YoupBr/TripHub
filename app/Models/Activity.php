@@ -19,10 +19,13 @@ class Activity extends Model
         'longitude',
     ];
 
-    protected $casts = [
+    protected function casts(): array
+{
+    return [
         'starts_at' => 'datetime',
         'ends_at' => 'datetime',
     ];
+}
 
     public function trip()
     {

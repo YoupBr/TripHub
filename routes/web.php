@@ -1,6 +1,8 @@
 <?php
 
-use App\Models\Activity;
+use App\Http\Controllers\ActivityController;
+use App\Http\Controllers\CalendarController;
+use App\Http\Controllers\TripController;
 use App\Models\ChecklistItem;
 use App\Models\Document;
 use App\Models\Trip;
@@ -10,59 +12,93 @@ use Illuminate\Support\Facades\Storage;
 
 Route::redirect('/home', '/')->name('home');
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware('auth')->group(function (): void {
+    /*
+    |--------------------------------------------------------------------------
+    | Dashboard
+    |--------------------------------------------------------------------------
+    */
+
     Route::get('/', function () {
-        $trip = Trip::with([
-            'activities' => fn ($query) => $query->orderBy('starts_at')->limit(5),
-            'documents',
-            'checklistItems',
-        ])->first();
+        $trip = Trip::query()
+            ->with([
+                'activities' => fn ($query) => $query
+                    ->orderBy('starts_at')
+                    ->limit(5),
+                'documents',
+                'checklistItems',
+            ])
+            ->first();
 
         return view('dashboard', compact('trip'));
     })->name('dashboard');
 
-    Route::get('/dashboard', function () {
-        return redirect()->route('dashboard');
-    });
+    Route::redirect('/dashboard', '/');
 
-    Route::get('/map', function () {
-    $trip = Trip::with([
-        'activities' => fn ($query) => $query
-            ->whereNotNull('latitude')
-            ->whereNotNull('longitude')
-            ->orderBy('starts_at'),
-    ])->firstOrFail();
+    /*
+    |--------------------------------------------------------------------------
+    | Trips
+    |--------------------------------------------------------------------------
+    */
 
-    return view('map.index', compact('trip'));
-    })->name('map.index');
+    Route::resource('trips', TripController::class);
 
-    Route::get('/activities/create', function () {
-        $trip = Trip::firstOrFail();
+    /*
+    |--------------------------------------------------------------------------
+    | Activities
+    |--------------------------------------------------------------------------
+    */
 
-        return view('activities.create', compact('trip'));
-    })->name('activities.create');
-
-    Route::post('/activities', function (Request $request) {
-        $validated = $request->validate([
-            'trip_id' => ['required', 'exists:trips,id'],
-            'title' => ['required', 'string', 'max:255'],
-            'starts_at' => ['required', 'date'],
-            'ends_at' => ['nullable', 'date', 'after_or_equal:starts_at'],
-            'location' => ['nullable', 'string', 'max:255'],
-            'category' => ['required', 'string', 'max:50'],
-            'description' => ['nullable', 'string'],
-            'location' => ['nullable', 'string', 'max:255'],
-            'latitude' => ['nullable', 'numeric', 'between:-90,90'],
-            'longitude' => ['nullable', 'numeric', 'between:-180,180'],
+    Route::resource('activities', ActivityController::class)
+        ->only([
+            'create',
+            'store',
+            'edit',
+            'update',
+            'destroy',
         ]);
 
-        Activity::create($validated);
+    /*
+    |--------------------------------------------------------------------------
+    | Calendar
+    |--------------------------------------------------------------------------
+    */
 
-        return redirect()->route('dashboard');
-    })->name('activities.store');
+    Route::get('/calendar', [CalendarController::class, 'index'])
+        ->name('calendar.index');
+
+    Route::get('/calendar/events', [CalendarController::class, 'events'])
+        ->name('calendar.events');
+
+    /*
+    |--------------------------------------------------------------------------
+    | Map
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get('/map', function () {
+        $trip = Trip::query()
+            ->with([
+                'activities' => fn ($query) => $query
+                    ->whereNotNull('latitude')
+                    ->whereNotNull('longitude')
+                    ->orderBy('starts_at'),
+            ])
+            ->firstOrFail();
+
+        return view('map.index', compact('trip'));
+    })->name('map.index');
+
+    /*
+    |--------------------------------------------------------------------------
+    | Documents
+    |--------------------------------------------------------------------------
+    */
 
     Route::get('/documents', function () {
-        $trip = Trip::with('documents')->firstOrFail();
+        $trip = Trip::query()
+            ->with('documents')
+            ->firstOrFail();
 
         return view('documents.index', compact('trip'));
     })->name('documents.index');
@@ -74,16 +110,19 @@ Route::middleware(['auth'])->group(function () {
             'file' => ['required', 'file', 'max:10240'],
         ]);
 
-        $path = $request->file('file')->store('documents', 'public');
+        $file = $request->file('file');
+        $path = $file->store('documents', 'public');
 
         Document::create([
             'trip_id' => $validated['trip_id'],
             'title' => $validated['title'],
             'file_path' => $path,
-            'type' => $request->file('file')->getClientOriginalExtension(),
+            'type' => $file->getClientOriginalExtension(),
         ]);
 
-        return redirect()->route('documents.index');
+        return redirect()
+            ->route('documents.index')
+            ->with('status', 'Document toegevoegd.');
     })->name('documents.store');
 
     Route::delete('/documents/{document}', function (Document $document) {
@@ -93,11 +132,21 @@ Route::middleware(['auth'])->group(function () {
 
         $document->delete();
 
-        return redirect()->route('documents.index');
+        return redirect()
+            ->route('documents.index')
+            ->with('status', 'Document verwijderd.');
     })->name('documents.destroy');
 
+    /*
+    |--------------------------------------------------------------------------
+    | Checklist
+    |--------------------------------------------------------------------------
+    */
+
     Route::get('/checklist', function () {
-        $trip = Trip::with('checklistItems')->firstOrFail();
+        $trip = Trip::query()
+            ->with('checklistItems')
+            ->firstOrFail();
 
         return view('checklist.index', compact('trip'));
     })->name('checklist.index');
@@ -114,10 +163,14 @@ Route::middleware(['auth'])->group(function () {
             'is_done' => false,
         ]);
 
-        return redirect()->route('checklist.index');
+        return redirect()
+            ->route('checklist.index')
+            ->with('status', 'Checklist-item toegevoegd.');
     })->name('checklist.store');
 
-    Route::patch('/checklist/{checklistItem}/toggle', function (ChecklistItem $checklistItem) {
+    Route::patch('/checklist/{checklistItem}/toggle', function (
+        ChecklistItem $checklistItem
+    ) {
         $checklistItem->update([
             'is_done' => ! $checklistItem->is_done,
         ]);
@@ -125,22 +178,13 @@ Route::middleware(['auth'])->group(function () {
         return redirect()->route('checklist.index');
     })->name('checklist.toggle');
 
-    Route::delete('/checklist/{checklistItem}', function (ChecklistItem $checklistItem) {
+    Route::delete('/checklist/{checklistItem}', function (
+        ChecklistItem $checklistItem
+    ) {
         $checklistItem->delete();
 
-        return redirect()->route('checklist.index');
+        return redirect()
+            ->route('checklist.index')
+            ->with('status', 'Checklist-item verwijderd.');
     })->name('checklist.destroy');
-
-    Route::get('/calendar', function () {
-        $trip = Trip::with([
-            'activities' => fn ($query) => $query->orderBy('starts_at'),
-        ])->firstOrFail();
-
-        $activitiesByDay = $trip->activities->groupBy(function ($activity) {
-            return $activity->starts_at->format('Y-m-d');
-        });
-
-        return view('calendar.index', compact('trip', 'activitiesByDay'));
-    })->name('calendar.index');
 });
-

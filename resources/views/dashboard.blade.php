@@ -91,7 +91,7 @@
                         @else
                             <div class="space-y-3">
                                 @foreach($trip->activities as $activity)
-                                    <article class="flex gap-4 rounded-2xl border border-slate-200 p-4">
+                                    <a href="{{ route('activities.edit', $activity) }}" class="flex gap-4 rounded-2xl border border-slate-200 p-4">
                                         <div class="flex h-14 w-14 shrink-0 flex-col items-center justify-center rounded-xl bg-blue-100 text-blue-800">
                                             <span class="text-xs font-bold">{{ strtoupper($activity->starts_at->format('M')) }}</span>
                                             <span class="text-lg font-bold">{{ $activity->starts_at->format('d') }}</span>
@@ -106,7 +106,7 @@
                                                 @endif
                                             </p>
                                         </div>
-                                    </article>
+                                    </a>
                                 @endforeach
                             </div>
                         @endif

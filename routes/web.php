@@ -5,6 +5,7 @@ use App\Http\Controllers\TripController;
 use App\Models\ChecklistItem;
 use App\Models\Document;
 use App\Models\Trip;
+use App\Models\Activity;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -79,21 +80,43 @@ Route::middleware('auth')->group(function (): void {
     |--------------------------------------------------------------------------
     */
 
-    Route::get('/calendar', function () use ($activeTripQuery) {
-        $trip = $activeTripQuery()
-            ->with([
-                'activities' => fn ($query) => $query
-                    ->where('starts_at', '>=', now()->startOfDay())
-                    ->orderBy('starts_at'),
+        Route::get('/calendar', function () use ($activeTripQuery) {
+        $trip = $activeTripQuery()->firstOrFail();
+
+        return view('calendar.index', compact('trip'));
+        })->name('calendar.index');
+
+         Route::get('/calendar/events', function (Request $request) use ($activeTripQuery) {
+        $trip = $activeTripQuery()->firstOrFail();
+
+        $activities = \App\Models\Activity::query()
+            ->where('trip_id', $trip->id)
+            ->when(
+                $request->filled('start'),
+                fn ($query) => $query->where('starts_at', '>=', $request->string('start'))
+            )
+            ->when(
+                $request->filled('end'),
+                fn ($query) => $query->where('starts_at', '<', $request->string('end'))
+            )
+            ->orderBy('starts_at')
+            ->get();
+
+        return response()->json(
+            $activities->map(fn ($activity) => [
+                'id' => $activity->id,
+                'title' => $activity->title,
+                'start' => $activity->starts_at->toIso8601String(),
+                'end' => $activity->ends_at?->toIso8601String(),
+                'url' => route('activities.edit', $activity),
+                'extendedProps' => [
+                    'location' => $activity->location,
+                    'description' => $activity->description,
+                    'category' => $activity->category,
+                ],
             ])
-            ->firstOrFail();
-
-        $activitiesByDay = $trip->activities->groupBy(
-            fn ($activity) => $activity->starts_at->format('Y-m-d')
         );
-
-        return view('calendar.index', compact('trip', 'activitiesByDay'));
-    })->name('calendar.index');
+    })->name('calendar.events');
 
     /*
     |--------------------------------------------------------------------------

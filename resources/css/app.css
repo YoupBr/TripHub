@@ -64,3 +64,49 @@ select:focus[data-flux-control] {
 /* \[:where(&)\]:size-4 {
     @apply size-4;
 } */
+
+.fc {
+    --fc-border-color: rgb(226 232 240);
+    --fc-button-bg-color: rgb(29 78 216);
+    --fc-button-border-color: rgb(29 78 216);
+    --fc-button-hover-bg-color: rgb(30 64 175);
+    --fc-button-hover-border-color: rgb(30 64 175);
+    --fc-button-active-bg-color: rgb(30 64 175);
+    --fc-button-active-border-color: rgb(30 64 175);
+    --fc-event-bg-color: rgb(29 78 216);
+    --fc-event-border-color: rgb(29 78 216);
+    --fc-today-bg-color: rgb(239 246 255);
+}
+
+.fc .fc-toolbar {
+    gap: 0.75rem;
+}
+
+.fc .fc-toolbar-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.fc .fc-button {
+    border-radius: 0.75rem;
+    box-shadow: none;
+    font-size: 0.875rem;
+}
+
+.fc .fc-event {
+    border-radius: 0.5rem;
+    padding: 0.125rem 0.25rem;
+    cursor: pointer;
+}
+
+@media (max-width: 639px) {
+    .fc .fc-toolbar {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .fc .fc-toolbar-chunk {
+        display: flex;
+        justify-content: center;
+    }
+}

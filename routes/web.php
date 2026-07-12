@@ -1,11 +1,11 @@
 <?php
 
 use App\Http\Controllers\ActivityController;
-use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\TripController;
 use App\Models\ChecklistItem;
 use App\Models\Document;
 use App\Models\Trip;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
@@ -15,14 +15,31 @@ Route::redirect('/home', '/')->name('home');
 Route::middleware('auth')->group(function (): void {
     /*
     |--------------------------------------------------------------------------
+    | Helper voor huidige/eerstvolgende reis
+    |--------------------------------------------------------------------------
+    */
+
+    $activeTripQuery = function (): Builder {
+        return Trip::query()
+            ->where(function (Builder $query): void {
+                $query
+                    ->whereDate('end_date', '>=', today())
+                    ->orWhereNull('end_date');
+            })
+            ->orderBy('start_date');
+    };
+
+    /*
+    |--------------------------------------------------------------------------
     | Dashboard
     |--------------------------------------------------------------------------
     */
 
-    Route::get('/', function () {
-        $trip = Trip::query()
+    Route::get('/', function () use ($activeTripQuery) {
+        $trip = $activeTripQuery()
             ->with([
-                'activities' => fn ($query) => $query
+                'activities' => fn (Builder $query) => $query
+                    ->where('starts_at', '>=', now())
                     ->orderBy('starts_at')
                     ->limit(5),
                 'documents',
@@ -32,8 +49,6 @@ Route::middleware('auth')->group(function (): void {
 
         return view('dashboard', compact('trip'));
     })->name('dashboard');
-
-    Route::redirect('/dashboard', '/');
 
     /*
     |--------------------------------------------------------------------------
@@ -64,11 +79,21 @@ Route::middleware('auth')->group(function (): void {
     |--------------------------------------------------------------------------
     */
 
-    Route::get('/calendar', [CalendarController::class, 'index'])
-        ->name('calendar.index');
+    Route::get('/calendar', function () use ($activeTripQuery) {
+        $trip = $activeTripQuery()
+            ->with([
+                'activities' => fn (Builder $query) => $query
+                    ->where('starts_at', '>=', now()->startOfDay())
+                    ->orderBy('starts_at'),
+            ])
+            ->firstOrFail();
 
-    Route::get('/calendar/events', [CalendarController::class, 'events'])
-        ->name('calendar.events');
+        $activitiesByDay = $trip->activities->groupBy(
+            fn ($activity) => $activity->starts_at->format('Y-m-d')
+        );
+
+        return view('calendar.index', compact('trip', 'activitiesByDay'));
+    })->name('calendar.index');
 
     /*
     |--------------------------------------------------------------------------
@@ -76,10 +101,10 @@ Route::middleware('auth')->group(function (): void {
     |--------------------------------------------------------------------------
     */
 
-    Route::get('/map', function () {
-        $trip = Trip::query()
+    Route::get('/map', function () use ($activeTripQuery) {
+        $trip = $activeTripQuery()
             ->with([
-                'activities' => fn ($query) => $query
+                'activities' => fn (Builder $query) => $query
                     ->whereNotNull('latitude')
                     ->whereNotNull('longitude')
                     ->orderBy('starts_at'),
@@ -95,9 +120,11 @@ Route::middleware('auth')->group(function (): void {
     |--------------------------------------------------------------------------
     */
 
-    Route::get('/documents', function () {
-        $trip = Trip::query()
-            ->with('documents')
+    Route::get('/documents', function () use ($activeTripQuery) {
+        $trip = $activeTripQuery()
+            ->with([
+                'documents' => fn (Builder $query) => $query->latest(),
+            ])
             ->firstOrFail();
 
         return view('documents.index', compact('trip'));
@@ -143,9 +170,13 @@ Route::middleware('auth')->group(function (): void {
     |--------------------------------------------------------------------------
     */
 
-    Route::get('/checklist', function () {
-        $trip = Trip::query()
-            ->with('checklistItems')
+    Route::get('/checklist', function () use ($activeTripQuery) {
+        $trip = $activeTripQuery()
+            ->with([
+                'checklistItems' => fn (Builder $query) => $query
+                    ->orderBy('is_done')
+                    ->latest(),
+            ])
             ->firstOrFail();
 
         return view('checklist.index', compact('trip'));

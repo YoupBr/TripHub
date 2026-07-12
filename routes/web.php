@@ -21,7 +21,7 @@ Route::middleware('auth')->group(function (): void {
 
     $activeTripQuery = function (): Builder {
         return Trip::query()
-            ->where(function (Builder $query): void {
+            ->where(function ($query): void {
                 $query
                     ->whereDate('end_date', '>=', today())
                     ->orWhereNull('end_date');
@@ -38,7 +38,7 @@ Route::middleware('auth')->group(function (): void {
     Route::get('/', function () use ($activeTripQuery) {
         $trip = $activeTripQuery()
             ->with([
-                'activities' => fn (Builder $query) => $query
+                'activities' => fn ($query) => $query
                     ->where('starts_at', '>=', now())
                     ->orderBy('starts_at')
                     ->limit(5),
@@ -82,7 +82,7 @@ Route::middleware('auth')->group(function (): void {
     Route::get('/calendar', function () use ($activeTripQuery) {
         $trip = $activeTripQuery()
             ->with([
-                'activities' => fn (Builder $query) => $query
+                'activities' => fn ($query) => $query
                     ->where('starts_at', '>=', now()->startOfDay())
                     ->orderBy('starts_at'),
             ])
@@ -104,7 +104,7 @@ Route::middleware('auth')->group(function (): void {
     Route::get('/map', function () use ($activeTripQuery) {
         $trip = $activeTripQuery()
             ->with([
-                'activities' => fn (Builder $query) => $query
+                'activities' => fn ($query) => $query
                     ->whereNotNull('latitude')
                     ->whereNotNull('longitude')
                     ->orderBy('starts_at'),
@@ -123,7 +123,7 @@ Route::middleware('auth')->group(function (): void {
     Route::get('/documents', function () use ($activeTripQuery) {
         $trip = $activeTripQuery()
             ->with([
-                'documents' => fn (Builder $query) => $query->latest(),
+                'documents' => fn ($query) => $query->latest(),
             ])
             ->firstOrFail();
 
@@ -173,7 +173,7 @@ Route::middleware('auth')->group(function (): void {
     Route::get('/checklist', function () use ($activeTripQuery) {
         $trip = $activeTripQuery()
             ->with([
-                'checklistItems' => fn (Builder $query) => $query
+                'checklistItems' => fn ($query) => $query
                     ->orderBy('is_done')
                     ->latest(),
             ])

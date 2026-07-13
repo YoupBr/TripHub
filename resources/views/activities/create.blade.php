@@ -33,7 +33,7 @@
                         name="title"
                         value="{{ old('title') }}"
                         placeholder="Bijv. Tannen"
-                        class="w-full rounded-xl border-slate-300"
+                        class="w-full rounded-xl border-slate-300 px-3 py-3"
                         required
                     >
                     @error('title')

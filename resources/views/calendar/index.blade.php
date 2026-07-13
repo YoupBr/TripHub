@@ -47,7 +47,9 @@
 </header>
 
             <section class="overflow-hidden rounded-3xl bg-white p-4 shadow-sm ring-1 ring-slate-200 sm:p-6">
-                <div id="calendar"></div>
+                <div id="calendar"
+                data-events-url="{{ route('calendar.events', ['trip' => $selectedTripId]) }}"
+                data-create-url="{{ route('activities.create', ['trip' => $selectedTripId]) }}"></div>
             </section>
         </main>
     </div>

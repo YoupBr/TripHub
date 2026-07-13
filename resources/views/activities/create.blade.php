@@ -32,7 +32,7 @@
                         type="text"
                         name="title"
                         value="{{ old('title') }}"
-                        placeholder="Bijv. Vlucht naar Pisa"
+                        placeholder="Bijv. Tannen"
                         class="w-full rounded-xl border-slate-300"
                         required
                     >
@@ -101,7 +101,7 @@
                                 name="location"
                                 id="location"
                                 type="text"
-                                placeholder="Zoek bijvoorbeeld: Eiffeltoren, Parijs"
+                                placeholder="Zoek bijvoorbeeld: Dichtstbijzijnde Café"
                                 class="mt-1 block w-full rounded-md border-gray-300"
                                 autocomplete="off"
                             >

@@ -80,10 +80,13 @@ Route::middleware('auth')->group(function (): void {
     |--------------------------------------------------------------------------
     */
 
-        Route::get('/calendar', function () use ($activeTripQuery) {
+    Route::get('/calendar', function () use ($activeTripQuery) {
         $trip = $activeTripQuery()->firstOrFail();
 
-         Route::get('/calendar/events', function (Request $request) use ($activeTripQuery) {
+        return view('calendar.index', compact('trip'));
+    })->name('calendar.index');
+
+    Route::get('/calendar/events', function (Request $request) use ($activeTripQuery) {
         $trip = $activeTripQuery()->firstOrFail();
 
         $activities = \App\Models\Activity::query()

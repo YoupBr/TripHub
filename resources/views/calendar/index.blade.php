@@ -55,6 +55,8 @@
     </div>
 
     <script>
-        window.calendarEventsUrl = @json(route('calendar.events'));
-    </script>
+    window.calendarEventsUrl = @json(
+        route('calendar.events', ['trip' => $selectedTripId])
+    );
+</script>
 </x-app-layout>

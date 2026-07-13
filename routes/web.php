@@ -83,9 +83,6 @@ Route::middleware('auth')->group(function (): void {
         Route::get('/calendar', function () use ($activeTripQuery) {
         $trip = $activeTripQuery()->firstOrFail();
 
-        return view('calendar.index', compact('trip'));
-        })->name('calendar.index');
-
          Route::get('/calendar/events', function (Request $request) use ($activeTripQuery) {
         $trip = $activeTripQuery()->firstOrFail();
 

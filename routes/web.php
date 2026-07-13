@@ -190,5 +190,5 @@ Route::middleware('auth')->group(function (): void {
             ->with('status', 'Checklist-item verwijderd.');
     })->name('checklist.destroy');
 });
-PHP
+
 ?>

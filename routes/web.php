@@ -1,3 +1,4 @@
+cat > routes/web.php <<'PHP'
 <?php
 
 use App\Http\Controllers\ActivityController;

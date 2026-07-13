@@ -191,3 +191,4 @@ Route::middleware('auth')->group(function (): void {
     })->name('checklist.destroy');
 });
 PHP
+?>

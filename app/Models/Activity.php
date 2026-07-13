@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Activity extends Model
 {
@@ -14,20 +15,18 @@ class Activity extends Model
         'ends_at',
         'location',
         'category',
-        'location',
         'latitude',
         'longitude',
     ];
 
-    protected function casts(): array
-{
-    return [
+    protected $casts = [
         'starts_at' => 'datetime',
         'ends_at' => 'datetime',
+        'latitude' => 'float',
+        'longitude' => 'float',
     ];
-}
 
-    public function trip()
+    public function trip(): BelongsTo
     {
         return $this->belongsTo(Trip::class);
     }

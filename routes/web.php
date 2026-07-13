@@ -80,9 +80,6 @@ Route::middleware('auth')->group(function (): void {
     |--------------------------------------------------------------------------
     */
 
-    Route::get('/calendar', function () use ($activeTripQuery) {
-        $trip = $activeTripQuery()->firstOrFail();
-
     Route::get('/calendar/events', function (Request $request) use ($activeTripQuery) {
         $trip = $activeTripQuery()->firstOrFail();
 

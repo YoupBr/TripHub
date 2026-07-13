@@ -5,38 +5,49 @@ namespace App\Http\Controllers;
 use App\Models\Activity;
 use App\Models\Trip;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class CalendarController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
-        $trip = Trip::query()
-            ->with([
-                'activities' => fn ($query) => $query->orderBy('starts_at'),
-            ])
+        $trips = Trip::query()
             ->orderBy('start_date')
-            ->firstOrFail();
+            ->get();
 
-        $activitiesByDay = $trip->activities->groupBy(
-            fn (Activity $activity) =>
-                $activity->starts_at->format('Y-m-d')
+        $selectedTripId = $request->integer('trip');
+
+        $activities = Activity::query()
+            ->with('trip')
+            ->when(
+                $selectedTripId,
+                fn ($query) => $query->where('trip_id', $selectedTripId)
+            )
+            ->orderBy('starts_at')
+            ->get();
+
+        $activitiesByDay = $activities->groupBy(
+            fn (Activity $activity) => $activity->starts_at->format('Y-m-d')
         );
 
         return view('calendar.index', compact(
-            'trip',
+            'trips',
+            'selectedTripId',
             'activitiesByDay'
         ));
     }
 
-    public function events(): JsonResponse
+    public function events(Request $request): JsonResponse
     {
-        $trip = Trip::query()
-            ->orderBy('start_date')
-            ->firstOrFail();
+        $selectedTripId = $request->integer('trip');
 
         $activities = Activity::query()
-            ->where('trip_id', $trip->id)
+            ->with('trip')
+            ->when(
+                $selectedTripId,
+                fn ($query) => $query->where('trip_id', $selectedTripId)
+            )
             ->orderBy('starts_at')
             ->get();
 
@@ -47,10 +58,11 @@ class CalendarController extends Controller
                 'start' => $activity->starts_at->toIso8601String(),
                 'end' => $activity->ends_at?->toIso8601String(),
                 'url' => route('activities.edit', $activity),
+
                 'extendedProps' => [
                     'location' => $activity->location,
                     'category' => $activity->category,
-                    'description' => $activity->description,
+                    'trip' => $activity->trip?->name,
                 ],
             ])
         );

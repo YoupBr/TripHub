@@ -108,6 +108,22 @@
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('calendar.index')" :active="request()->routeIs('calendar.*')">
+                Agenda
+            </x-responsive-nav-link>
+            
+            <x-responsive-nav-link :href="route('documents.index')" :active="request()->routeIs('documents.*')">
+                Documenten
+            </x-responsive-nav-link>
+            
+            <x-responsive-nav-link :href="route('map.index')" :active="request()->routeIs('map.*')">
+                Kaart
+            </x-responsive-nav-link>
+            
+            <x-responsive-nav-link :href="route('trips.index')" :active="request()->routeIs('trips.*')">
+                Reizen
+            </x-responsive-nav-link>
+            
         </div>
 
         <!-- Responsive Settings Options -->
